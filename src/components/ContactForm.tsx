@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Loader2, RotateCcw } from 'lucide-react';
 import FormField from './FormField';
 import { useToast } from './ToastProvider';
 import { useConfirm } from './ConfirmDialog';
+import { submitContactMessage, isSupabaseConfigured } from '../lib/supabase';
 
 type Field = 'name' | 'phone' | 'notes';
 type Values = Record<Field, string>;
@@ -44,6 +45,16 @@ function sanitize(field: Field, value: string): string {
 }
 
 async function sendRequest(payload: Values): Promise<void> {
+  if (isSupabaseConfigured) {
+    const { error } = await submitContactMessage({
+      name: payload.name,
+      phone: payload.phone,
+      notes: payload.notes,
+    });
+    if (error) throw error;
+    return;
+  }
+
   if (!ENDPOINT) {
     await new Promise((r) => setTimeout(r, 900));
     return;

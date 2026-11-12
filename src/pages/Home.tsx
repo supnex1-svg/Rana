@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Phone, Mail, ArrowRight, ClipboardCheck } from 'lucide-react';
+import { ChevronDown, ChevronUp, ClipboardCheck } from 'lucide-react';
 import SEO from '../components/SEO';
 import ScrollReveal from '../components/ScrollReveal';
 import Preloader from '../components/Preloader';

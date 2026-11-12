@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Check, Download, Loader2, Lock, Paperclip } from
 import SEO from '../components/SEO';
 import ScrollReveal from '../components/ScrollReveal';
 import { trackConversion } from '../lib/analytics';
+import { submitJobApplication, isSupabaseConfigured } from '../lib/supabase';
 
 // ───────────────────────── الإعدادات ─────────────────────────
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -491,18 +492,29 @@ export const Audit: React.FC = () => {
 
   const finishSubmit = async () => {
     if (sending) return;
+    if (honeypot.current?.value) return;
     setSending(true);
     setSendError(null);
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, website: honeypot.current?.value ?? '' }),
-      });
-      const json = await res.json().catch(() => ({} as { id?: string; error?: string }));
-      if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+      let id: string;
 
-      const id: string = json.id || `AJ-${Date.now().toString().slice(-8)}`;
+      if (isSupabaseConfigured) {
+        const { data: resData, error: sbError } = await submitJobApplication(data);
+        if (sbError) throw new Error(sbError.message || 'Failed to submit application.');
+        id = resData?.id || `AJ-${Date.now().toString().slice(-8)}`;
+      } else if (import.meta.env.VITE_API_URL) {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, website: honeypot.current?.value ?? '' }),
+        });
+        const json = await res.json().catch(() => ({} as { id?: string; error?: string }));
+        if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+        id = json.id || `AJ-${Date.now().toString().slice(-8)}`;
+      } else {
+        await new Promise((r) => setTimeout(r, 700));
+        id = `AJ-${Date.now().toString().slice(-8)}`;
+      }
 
       if (SHOW_HR_WORKSPACE) {
         const app: Application = { ...data, id, submittedAt: new Date().toLocaleString('en-GB') };
@@ -516,9 +528,9 @@ export const Audit: React.FC = () => {
       }
 
       setSubmittedId(id);
+      trackConversion('application');
       topRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     } catch (err) {
-      // TypeError = مشكلة اتصال (السيرفر مش شغال أو النت قاطع)
       setSendError(
         err instanceof Error && err.name !== 'TypeError'
           ? err.message

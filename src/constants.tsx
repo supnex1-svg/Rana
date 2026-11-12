@@ -1,5 +1,4 @@
 // src/constants.tsx
-import React from 'react';
 import type { NavItem, ServiceItem, ClientItem } from './types';
 export const COLORS = {
   primary: '#C8202F', // O4U Brand Red
