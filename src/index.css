@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/* HCI Principle: Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* HCI Principle: Accessibility Focus Indicator */
+:focus-visible {
+  outline: 2px solid #C8202F !important;
+  outline-offset: 3px !important;
+}
+
+/* HCI Principle: Micro-interactions for buttons and links */
+button, a {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active Pressed Feedback State */
+button:active, a:active {
+  transform: scale(0.98);
+}
+
+/* Custom Scrollbar for sleek UI */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8202f;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9e1723;
+}
+
+/* ===== اللغة العربية ===== */
+/* الخط العربي */
+html[lang='ar'] body,
+[lang='ar'] {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* تباعد الحروف (tracking-*) بيفك الحروف العربية، فبنلغيه في العربي */
+[lang='ar'] * {
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+/* ===== اتجاه الصفحة من اليمين لليسار ===== */
+html[dir='rtl'],
+html[dir='rtl'] body,
+[dir='rtl'] {
+  direction: rtl;
+}
+
+/* الصفحات اللي لسه فيها class="dir-ltr" و "text-left" تتبع اتجاه اللغة بدل ما تفضل شمال */
+[dir='rtl'] .dir-ltr {
+  direction: rtl !important;
+}
+[dir='rtl'] .text-left {
+  text-align: right !important;
+}

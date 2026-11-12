@@ -1,0 +1,1 @@
+{"type":"commonjs","dependencies":{"express-rate-limit":"^8.7.3","nodemailer":"^10.4.0","puppeteer":"^25.16.0"}}
