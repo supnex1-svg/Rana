@@ -16,12 +16,14 @@ export async function submitContactMessage(payload: {
   notes?: string;
   lang?: string;
 }) {
+  const refId = `CT-${Date.now().toString().slice(-8)}`;
+
   if (!supabase) {
     console.warn('Supabase is not configured. Falling back to local simulated response.');
-    return { data: { id: `CT-${Date.now().toString().slice(-8)}` }, error: null };
+    return { data: { id: refId }, error: null };
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('contacts')
     .insert([
       {
@@ -30,21 +32,21 @@ export async function submitContactMessage(payload: {
         notes: payload.notes?.trim() || null,
         lang: payload.lang || 'ar',
       },
-    ])
-    .select('id')
-    .single();
+    ]);
 
-  return { data, error };
+  return { data: { id: refId }, error };
 }
 
 // دالة إرسال طلب توظيف من صفحة /audit
 export async function submitJobApplication(payload: Record<string, any>) {
+  const refId = `AJ-${Date.now().toString().slice(-8)}`;
+
   if (!supabase) {
     console.warn('Supabase is not configured. Falling back to local simulated response.');
-    return { data: { id: `AJ-${Date.now().toString().slice(-8)}` }, error: null };
+    return { data: { id: refId }, error: null };
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('applications')
     .insert([
       {
@@ -56,11 +58,9 @@ export async function submitJobApplication(payload: Record<string, any>) {
         governorate: payload.governorate || null,
         details: payload,
       },
-    ])
-    .select('id')
-    .single();
+    ]);
 
-  return { data, error };
+  return { data: { id: refId }, error };
 }
 
 // دالة تسجيل إحصائيات الزيارات
