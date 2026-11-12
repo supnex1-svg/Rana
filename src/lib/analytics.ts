@@ -85,7 +85,6 @@ function touchSession(): { session: SessionState; isNew: boolean } {
 export function isTrackingEnabled(): boolean {
   if (typeof window === 'undefined') return false;
   if (navigator.webdriver) return false; // بوتات الأتمتة
-  if (navigator.doNotTrack === '1') return false; // المستخدم رافض التتبّع
   return read(OPT_OUT_KEY) !== '1';
 }
 

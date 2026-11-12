@@ -68,19 +68,22 @@ export async function logAnalyticsEvent(payload: Record<string, any>) {
   if (!supabase) return;
 
   try {
-    await supabase.from('analytics').insert([
+    const { error } = await supabase.from('analytics').insert([
       {
         type: payload.type || 'pv',
         vid: payload.vid || null,
         session_id: payload.sid || null,
-        path: payload.path || window.location.pathname,
-        referrer: payload.ref || document.referrer || null,
+        path: payload.path || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+        referrer: payload.ref || (typeof document !== 'undefined' ? document.referrer : null) || null,
         device: payload.dev || null,
         lang: payload.lang || null,
         extra: payload,
       },
     ]);
-  } catch {
-    // إحصائيات الزيارات لا يجب أن تعطل تجربة المستخدم
+    if (error) {
+      console.warn('Analytics logging notice:', error.message);
+    }
+  } catch (err) {
+    console.warn('Analytics logging exception:', err);
   }
 }
