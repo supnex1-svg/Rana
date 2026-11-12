@@ -18,6 +18,17 @@ export async function submitContactMessage(payload: {
 }) {
   const refId = `CT-${Date.now().toString().slice(-8)}`;
 
+  // إرسال إشعار الإيميل في الخلفية
+  try {
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, id: refId }),
+    }).catch(() => {});
+  } catch {
+    /* لا يعطل الحفظ الأساسي */
+  }
+
   if (!supabase) {
     console.warn('Supabase is not configured. Falling back to local simulated response.');
     return { data: { id: refId }, error: null };
@@ -40,6 +51,17 @@ export async function submitContactMessage(payload: {
 // دالة إرسال طلب توظيف من صفحة /audit
 export async function submitJobApplication(payload: Record<string, any>) {
   const refId = `AJ-${Date.now().toString().slice(-8)}`;
+
+  // إرسال إشعار الإيميل في الخلفية
+  try {
+    fetch('/api/applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, id: refId }),
+    }).catch(() => {});
+  } catch {
+    /* لا يعطل الحفظ الأساسي */
+  }
 
   if (!supabase) {
     console.warn('Supabase is not configured. Falling back to local simulated response.');
